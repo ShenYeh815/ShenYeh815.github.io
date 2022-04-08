@@ -1,71 +1,68 @@
 import React, { useState } from "react"
 
-export default function TodoList({id, text, completed, todos, setTodos}) {
-  const [editMode, setEditMode] = useState(false)
-  const [editValue, setEditValue] = useState(text)
+export default function TodoList({ todo, setTodo, removeTodo }) {
   const handleDelete = (e) => {
     e.preventDefault()
-    let newTodos = [...todos]
-    newTodos = newTodos.filter(element => element.id !== id)
-    console.log(newTodos.filter(element => element.id !== id))
-    setTodos(newTodos)
+    removeTodo()
   }
 
-  const handleEdit = (e) => {
-    e.preventDefault()
-    const newTodos = [...todos]
-    const index = newTodos.findIndex(element => element.id === id)
-    newTodos[index]={
-      ...newTodos[index],
-      text: editValue,
-    }
-    setTodos(newTodos)
-    setEditValue("")
-    setEditMode(false)
+  const [editingValue, setEditingValue] = useState('')
 
+  const handleEdit = (e) => {
+    if (todo.editing) {
+      setTodo({
+        text: editingValue,
+        editing: false,
+      })
+      setEditingValue('')
+    } else {
+      setTodo({
+        editing: true,
+      })
+      setEditingValue(todo.text)
+    }
   }
 
   const handleCheckBox = (e) => {
-    const newTodos = [...todos]
-    const index = newTodos.findIndex(element => element.id === id)
-    newTodos[index]={
-      ...newTodos[index],
-      completed: !newTodos[index].completed,
-    }
-    setTodos(newTodos)    
+    setTodo({
+      completed: !todo.completed
+    })
   }
 
   return (
-    <div class="flex w-full text-base justify-between px-2">
-      <div class="flex items-center space-x-2">
+    <div className="flex w-full text-base justify-between px-2">
+      <div className="flex items-center space-x-2 my-[2px]">
         <input
           type="checkbox"
-          checked={completed}
+          checked={todo.completed}
           onChange={handleCheckBox}
         />
         {
-          editMode ? (
+          todo.editing ? (
             <form onSubmit={handleEdit}>
               <input
                 type="text"
-                value={editValue}
-                onChange={(e)=>setEditValue(e.target.value)}
-                class="bg-gray-500 rounded-[4px] outline-none text-sm text-white indent-2 w-[160px]"
+                value={editingValue}
+                onChange={(e) => {
+                  setEditingValue(e.target.value)
+                }}
+                className="bg-gray-500 rounded-[4px] outline-none text-sm text-white indent-2 w-[160px]"
               />
             </form>
           ) : (
-            <div class="text-sm py-1">{text}</div>
+            <div className="text-sm py-1">{todo.text}</div>
           )
         }
       </div>
-      <div class="flex space-x-3">
-        <button 
-          type="button" 
-          class="text-sm text-white " 
-          onClick={(e)=>setEditMode(true)}>修改</button>
-        <button 
-          type="button" 
-          class="text-sm text-white " 
+      <div className="flex space-x-3">
+        <button
+          type="button"
+          className="text-sm text-white "
+          onClick={handleEdit}
+        >{todo.editing ? "確定" : "修改"}</button>
+        <button
+          type="button"
+          className="text-sm text-white "
           onClick={handleDelete}>刪除</button>
       </div>
     </div>
