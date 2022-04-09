@@ -50,7 +50,11 @@ export default function TodoList({ todo, setTodo, removeTodo }) {
               />
             </form>
           ) : (
-            <div className="text-sm py-1">{todo.text}</div>
+            todo.completed ? (
+              <div className="text-sm py-1 line-through text-gray-500">{todo.text}</div>
+            ) : (
+              <div className="text-sm py-1">{todo.text}</div>
+            )
           )
         }
       </div>

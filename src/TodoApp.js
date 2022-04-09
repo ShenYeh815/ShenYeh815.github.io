@@ -1,9 +1,10 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import TodoList from "./components/TodoList"
 
 export default function TodoApp(props) {
   const [id, setId] = useState(1)
-  const [todos, setTodos] = useState([
+  const savedTodos = JSON.parse(localStorage.getItem("todos"))
+  const [todos, setTodos] = useState(savedTodos || [
     {
       id: 0,
       text: "新增一個代辦事項",
@@ -17,6 +18,11 @@ export default function TodoApp(props) {
       editing: false,
     }
   ])
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos))
+  })
+
   const [value, setValue] = useState("")
 
   const addTodo = (e) => {
@@ -44,18 +50,19 @@ export default function TodoApp(props) {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="flex flex-col items-center w-screen h-screen bg-gray-800">
+      <div className="flex flex-col items-center w-screen h-screen bg-gray-800 overflow-y-auto">
         <h1 className="text-4xl text-white p-2">Todo List</h1>
         <form onSubmit={addTodo}>
           <input
-            className="bg-gray-500 rounded-[4px] outline-none text-sm text-white indent-2"
+            className="bg-gray-500 rounded-[4px] outline-none text-sm text-white indent-2 placeholder:text-white"
             value={value}
             onChange={(e) => setValue(e.target.value)}
+            placeholder="請在此輸入文字..."
             required
           />
           <button className="text-sm text-white bg-gray-500 px-2 ml-2 rounded-[4px] outline outline-gray-800 outline-1 active:bg-gray-400">新增</button>
         </form>
-        <div className="flex flex-col items-center w-[280px] h-[560px] border-[1px] my-5 text-white ">
+        <div className="flex flex-col items-center w-screen h-screen border-[1px] rounded-md my-5 text-white overflow-y-auto">
           {
             todos.map((todo, index) => {
               const setTodo = ({
